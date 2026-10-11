@@ -1,0 +1,113 @@
+{
+  "name": "auto-pull",
+  "displayName": "Auto Pull [Secured]",
+  "description": "Automatically keeps the checked-out branch up to date with its upstream by running a guarded fetch and fast-forward pull when a workspace opens and on a configurable interval.",
+  "version": "0.1.0",
+  "publisher": "CyberT33N",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CyberT33N/vscode-auto-pull.git"
+  },
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "pull",
+    "fetch",
+    "autofetch",
+    "autopull",
+    "upstream"
+  ],
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Auto Pull [Secured]",
+      "properties": {
+        "autoPull.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the guarded auto pull cycle when a workspace opens and on the configured interval."
+        },
+        "autoPull.intervalSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 5,
+          "maximum": 3600,
+          "description": "Interval in seconds between auto pull cycles. The first cycle runs when the workspace opens."
+        },
+        "autoPull.strategy": {
+          "type": "string",
+          "enum": [
+            "ff-only",
+            "rebase"
+          ],
+          "default": "ff-only",
+          "description": "How integration is performed when the checked-out branch is behind its upstream. \"ff-only\" fast-forwards and never creates merge commits. \"rebase\" rebases local commits onto the upstream. Divergent branches are never merged automatically."
+        },
+        "autoPull.includeUntrackedFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Treat untracked files as non-blocking for the clean-tree guard. Tracked modifications, staged changes, in-progress merges, rebases, and cherry-picks always block the cycle."
+        },
+        "autoPull.showStatusBarItem": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the last auto pull cycle result in the status bar."
+        },
+        "autoPull.logLevel": {
+          "type": "string",
+          "enum": [
+            "off",
+            "error",
+            "warn",
+            "info",
+            "debug"
+          ],
+          "default": "info",
+          "description": "Verbosity of the Auto Pull output channel."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p ./tsconfig.json --noEmit && tsc -p ./tsconfig.test.json --noEmit",
+    "watch:typecheck": "tsc -p ./tsconfig.json --noEmit --watch --preserveWatchOutput",
+    "bundle": "node ./esbuild.js",
+    "watch:bundle": "node ./esbuild.js --watch",
+    "bundle:prod": "node ./esbuild.js --production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "package": "pnpm run typecheck && pnpm run coverage && pnpm run bundle:prod && node ./scripts/package-vsix.cjs"
+  },
+  "packageManager": "pnpm@11.7.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.7.0",
+      "onFail": "error"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/vscode": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vscode/vsce": "catalog:",
+    "esbuild": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:"
+  }
+}
